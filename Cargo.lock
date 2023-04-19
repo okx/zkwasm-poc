@@ -459,6 +459,7 @@ dependencies = [
 name = "zkwasm-poc"
 version = "0.1.0"
 dependencies = [
+ "getrandom",
  "hex",
  "num-bigint",
  "num-traits",
