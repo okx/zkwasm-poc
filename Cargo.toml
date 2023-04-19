@@ -16,3 +16,6 @@ primitive-types = "0.12.1"
 time = "0.3.20"
 wasm-bindgen = "0.2.84"
 getrandom = { version = "0.2", features = ["custom"] }
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
