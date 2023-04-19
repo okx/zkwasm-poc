@@ -4,7 +4,7 @@ use crate::types::constants::{BALANCE_LOWER_BOUND, BALANCE_UPPER_BOUND};
 use crate::types::{defined_types::AssetIdType, perp_error::PerpError};
 use num_bigint::BigInt;
 use num_traits::Zero;
-use time::OffsetDateTime;
+use crate::types::defined_types::timeType;
 
 #[derive(Debug, Default, Clone)]
 pub struct PositionAsset {
@@ -19,7 +19,7 @@ pub struct Position {
     pub public_key: PublicKeyType,
     pub collateral_balance: BigInt,
     pub assets: Vec<PositionAsset>,
-    pub funding_timestamp: OffsetDateTime,
+    pub funding_timestamp: timeType,
 }
 
 impl Default for Position {
@@ -28,7 +28,7 @@ impl Default for Position {
             public_key: PublicKeyType::default(),
             collateral_balance: BigInt::default(),
             assets: Vec::new(),
-            funding_timestamp: OffsetDateTime::from_unix_timestamp(0).unwrap(),
+            funding_timestamp: 0,
         }
     }
 }
@@ -73,7 +73,7 @@ pub fn position_new(
     public_key: &PublicKeyType,
     collateral_balance: BigInt,
     assets: &Vec<PositionAsset>,
-    funding_timestamp: &OffsetDateTime,
+    funding_timestamp: &timeType,
 ) -> Position {
     return Position {
         public_key: public_key.clone(),
@@ -128,7 +128,7 @@ pub fn create_maybe_empty_position(
     public_key: &PublicKeyType,
     collateral_balance: BigInt,
     assets: &Vec<PositionAsset>,
-    funding_timestamp: &OffsetDateTime,
+    funding_timestamp: &timeType,
 ) -> Position {
     // TODO public key
     // if public_key == 0 {
@@ -144,7 +144,7 @@ pub fn create_maybe_empty_position(
             &PublicKeyType::default(),
             BigInt::zero(),
             &empty_assets,
-            &OffsetDateTime::from_unix_timestamp(0).unwrap(),
+            &0,
         );
     }
 

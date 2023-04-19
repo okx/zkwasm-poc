@@ -1,7 +1,7 @@
 use crate::types::defined_types::HashType;
 use crate::types::config::GeneralConfig;
 
-use time::OffsetDateTime;
+use crate::types::defined_types::timeType;
 
 use crate::types::order::OrderDictAccess;
 use crate::types::objects::{FundingIndicesInfo, OraclePrices};
@@ -15,7 +15,7 @@ pub struct CarriedState {
     pub global_funding_indices: FundingIndicesInfo,
     pub oracle_prices: OraclePrices,
     // TODO: prev_execute_time maybe better name
-    pub system_time: OffsetDateTime,
+    pub system_time: timeType,
 }
 
 // State stored on the blockchain.
@@ -26,7 +26,7 @@ pub struct SharedState {
     pub orders_tree_height: u64,
     pub global_funding_indices: FundingIndicesInfo,
     pub oracle_prices: OraclePrices,
-    pub system_time: OffsetDateTime,
+    pub system_time: timeType,
 }
 
 // Applies the updates from the squashed carried state on the initial shared state.

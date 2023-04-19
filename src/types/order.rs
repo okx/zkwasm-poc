@@ -1,5 +1,4 @@
 use crate::types::packed_public_key::PublicKeyType;
-use time::OffsetDateTime;
 use primitive_types::H256;
 use num_bigint::BigInt;
 use num_traits::{ToPrimitive, Zero};
@@ -7,17 +6,19 @@ use crate::types::perp_error::PerpError;
 use crate::types::hash::{h256_to_bigint, bn254_hash_size_to_pedersen_hash_size};
 use crate::types::constants::*;
 use crate::types::exchange::AMOUNT_UPPER_BOUND;
+use crate::types::defined_types::timeType;
 pub type PositionIdType = u64;
 pub type OrderIdType = u64;
 pub type HashType = H256;
 pub type PrivateKeyType = String;
 pub type IndexType = i128;
 
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct OrderBase {
     pub nonce: u64,
     pub public_key: PublicKeyType,
-    pub expiration_timestamp: OffsetDateTime,
+    pub expiration_timestamp: timeType,
     pub signature: [u8; 64],
 }
 
@@ -26,7 +27,7 @@ impl Default for OrderBase {
         Self {
             nonce: 0,
             public_key: Default::default(),
-            expiration_timestamp: OffsetDateTime::from_unix_timestamp(0).unwrap(),
+            expiration_timestamp: 0,
             signature: [0; 64],
         }
     }
@@ -128,7 +129,7 @@ pub fn validate_order_and_update_fulfillment(
     order_dict: &mut OrderDictAccess,
     message_hash: &H256,
     _order: &OrderBase,
-    _min_expiration_timestamp: &OffsetDateTime,
+    _min_expiration_timestamp: &timeType,
     update_amount: BigInt,
     full_amount: BigInt,
 ) -> Result<(), PerpError> {

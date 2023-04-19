@@ -2,7 +2,7 @@ use crate::types::defined_types::PositionIdType;
 use crate::types::defined_types::{AssetIdType};
 use crate::types::packed_public_key::PublicKeyType;
 use num_bigint::BigInt;
-use time::OffsetDateTime;
+use crate::types::defined_types::timeType;
 use std::time::Duration;
 
 
@@ -122,7 +122,7 @@ pub struct BatchConfig {
     pub general_config: GeneralConfig,
     // pub signed_min_oracle_prices: Vec<OraclePrice>,
     // pub signed_max_oracle_prices: Vec<OraclePrice>,
-    pub min_expiration_timestamp: OffsetDateTime,
+    pub min_expiration_timestamp: timeType,
 }
 
 impl BatchConfig {
@@ -131,7 +131,7 @@ impl BatchConfig {
             general_config: GeneralConfig::test_config(),
             // signed_min_oracle_prices: vec![],
             // signed_max_oracle_prices: vec![],
-            min_expiration_timestamp: OffsetDateTime::from_unix_timestamp(0).unwrap(),
+            min_expiration_timestamp: 0,
         }
     }
 }

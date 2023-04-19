@@ -9,7 +9,7 @@ use crate::types::order::OrderBase;
 use crate::types::limit_order::LimitOrder;
 use crate::executor::execute;
 use num_bigint::BigInt;
-use time::OffsetDateTime;
+use crate::types::defined_types::timeType;
 use crate::mock::make_state;
 use crate::types::config::BatchConfig;
 use crate::types::state::CarriedState;
@@ -45,7 +45,7 @@ fn generate_trade_tx() -> Trade {
                 nonce: 1,
                 public_key: hex::decode("df84035a8f7be2bc8d8a7f2d4a0be6c1e774f0a4c16aa0b112e64eb62c09698a")
                     .unwrap().try_into().unwrap(),
-                expiration_timestamp: OffsetDateTime::from_unix_timestamp(3608164305).unwrap(),
+                expiration_timestamp: 3608164305,
                 signature: sig_a,
             },
             amount_synthetic: BigInt::from(100000000),
@@ -62,7 +62,7 @@ fn generate_trade_tx() -> Trade {
                 nonce: 1,
                 public_key: hex::decode("f5705bf1a2e8688ba804744fecc915371896aa7c39521966a9a61945dcda5219")
                     .unwrap().try_into().unwrap(),
-                expiration_timestamp: OffsetDateTime::from_unix_timestamp(3407305306).unwrap(),
+                expiration_timestamp: 3407305306,
                 signature: sig_b,
             },
             amount_synthetic: BigInt::from(200000000),

@@ -6,3 +6,5 @@ pub type OrderIdType = u64;
 pub type HashType = H256;
 pub type PrivateKeyType = String;
 pub type IndexType = i128;
+
+pub type timeType = u64;

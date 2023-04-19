@@ -1,5 +1,6 @@
 use num_bigint::BigInt;
-use time::OffsetDateTime;
+use types::defined_types::timeType;
+use crate::types;
 use crate::types::packed_public_key::PublicKeyType;
 use crate::types::position::Position;
 use crate::types::objects::OraclePrice;
@@ -26,7 +27,7 @@ pub(crate) fn make_state() -> CarriedState {
 
     let global_funding_indices = FundingIndicesInfo {
         funding_indices,
-        funding_timestamp: time::OffsetDateTime::from_unix_timestamp(0).unwrap(),
+        funding_timestamp: 0,
     };
 
     let data = vec![
@@ -54,7 +55,7 @@ pub(crate) fn make_state() -> CarriedState {
         public_key: party_a_public_key,
         collateral_balance: BigInt::from(10000000000i64), // 1w
         assets: vec![],
-        funding_timestamp: OffsetDateTime::from_unix_timestamp(0).unwrap(),
+        funding_timestamp: 0,
     };
 
     let _ = positions_dict.update(&party_a_position_id, &party_a_position);
@@ -68,7 +69,7 @@ pub(crate) fn make_state() -> CarriedState {
         public_key: party_b_public_key,
         collateral_balance: BigInt::from(10000000000i64), // 1w
         assets: vec![],
-        funding_timestamp: OffsetDateTime::from_unix_timestamp(0).unwrap(),
+        funding_timestamp: 0,
     };
 
     let _ = positions_dict.update(&party_b_position_id, &party_b_position);
@@ -78,6 +79,6 @@ pub(crate) fn make_state() -> CarriedState {
         orders_dict: OrderDictAccess::new(),
         global_funding_indices,
         oracle_prices,
-        system_time: OffsetDateTime::from_unix_timestamp(0).unwrap(),
+        system_time: 0,
     }
 }
