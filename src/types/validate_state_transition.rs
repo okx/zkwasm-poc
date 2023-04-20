@@ -27,7 +27,7 @@ pub fn check_valid_transition(
         position_get_status(&updated_position, &oracle_prices, &general_config)?;
 
     // is well leveraged
-    if updated_tr <= (updated_tv.clone() * FXP_32_ONE.clone()) {
+    if updated_tr <= &updated_tv * FXP_32_ONE {
         return Ok(());
     }
 
@@ -52,11 +52,11 @@ pub fn check_valid_transition(
     // TODO
     // let (success) = is_le_felt{range_check_ptr=range_check_ptr}(
     //     2**224 + initial_tv * updated_tr, 2**224 + updated_tv * initial_tr)
-    if initial_tv.clone() * updated_tr.clone() > updated_tv.clone() * initial_tr.clone() {
+    if &initial_tv * &updated_tr > &updated_tv * &initial_tr {
         return Err(PerpError::IllegalPositionTransitionReducingTotalValueRiskRatio);
     }
 
-    if initial_tr == BigInt::zero() {
+    if initial_tr.is_zero() {
         // Edge case: When the total risk is 0 the TV/TR ratio is undefined and we need to check that
         // initial_tv <= updated_tv. Note that because we passed
         // 'check_smaller_in_synthetic_holdings' and initial_tr == 0 we must have updated_tr == 0.

@@ -38,12 +38,16 @@ fn generate_trade_tx() -> Trade {
     let mut sig_b: [u8; 64] = [0; 64];
     hex::decode_to_slice("2ff1c4706c8eec9957357f188ca3b3cc4cac43eaccb4f1c17400ed0be3151706d97db8f7b52c9bb1bbcf0a5c8f40151748778f23af27e4afbe1e0234b8fdb201", &mut sig_a).unwrap();
     hex::decode_to_slice("b04e7cc7980a8ff3e1d4768103f89543c0dc1690c39b058146f8a36c03dc19adee7d810bc3d619a80b59437d93b49205c0f08d4ccfe1ca1a156053815caaeb05", &mut sig_b).unwrap();
+
+    let mut pub_a: [u8; 32] = [0; 32];
+    let mut pub_b: [u8; 32] = [0; 32];
+    hex::decode_to_slice("df84035a8f7be2bc8d8a7f2d4a0be6c1e774f0a4c16aa0b112e64eb62c09698a", &mut pub_a).unwrap();
+    hex::decode_to_slice("f5705bf1a2e8688ba804744fecc915371896aa7c39521966a9a61945dcda5219", &mut pub_b).unwrap();
     Trade{
         party_a_order: LimitOrder{
             base: OrderBase{
                 nonce: 1,
-                public_key: hex::decode("df84035a8f7be2bc8d8a7f2d4a0be6c1e774f0a4c16aa0b112e64eb62c09698a")
-                    .unwrap().try_into().unwrap(),
+                public_key: pub_a,
                 expiration_timestamp: 3608164305,
                 signature: sig_a,
             },
@@ -59,8 +63,7 @@ fn generate_trade_tx() -> Trade {
         party_b_order: LimitOrder{
             base: OrderBase{
                 nonce: 1,
-                public_key: hex::decode("f5705bf1a2e8688ba804744fecc915371896aa7c39521966a9a61945dcda5219")
-                    .unwrap().try_into().unwrap(),
+                public_key: pub_b,
                 expiration_timestamp: 3407305306,
                 signature: sig_b,
             },

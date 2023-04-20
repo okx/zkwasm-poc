@@ -28,12 +28,12 @@ fn check_smaller_in_synthetic_holdings_inner(
             continue;
         }
 
-        let updated_balance = updated_position_assets[j].balance.clone();
-        let initial_balance = initial_position_assets[i].balance.clone();
+        let updated_balance = &updated_position_assets[j].balance.clone();
+        let initial_balance = &initial_position_assets[i].balance.clone();
 
         // Check that updated_balance and initial_balance have the same sign.
         // They cannot be zero at this point.
-        if updated_balance.clone().mul(initial_balance.clone()) < BigInt::zero() {
+        if updated_balance.sign() != initial_balance.sign() {
             return Err(PerpError::IllegalPositionTransitionEnlargingSyntheticHoldings);
         }
 

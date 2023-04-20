@@ -121,22 +121,49 @@ pub fn execute_limit_order(
     Ok(())
 }
 
+use num_traits::ToPrimitive;
+
 pub fn execute_trade(
     carried_state: &mut CarriedState,
     batch_config: &BatchConfig,
     trade: &Trade,
 ) -> Result<(), PerpError> {
-    if trade.actual_collateral >= BigInt::from(AMOUNT_UPPER_BOUND) {
+    if let Some(bound) = trade.actual_collateral.to_i128() {
+        if bound >= AMOUNT_UPPER_BOUND {
+            return Err(PerpError::Error);
+        }
+    } else {
+        return Err(PerpError::Error);
+    }
+    if let Some(bound) = trade.actual_a_fee.to_i128() {
+        if bound >= AMOUNT_UPPER_BOUND {
+            return Err(PerpError::Error);
+        }
+    } else {
+        return Err(PerpError::Error);
+    }
+    if let Some(bound) = trade.actual_b_fee.to_i128() {
+        if bound >= AMOUNT_UPPER_BOUND {
+            return Err(PerpError::Error);
+        }
+    } else {
         return Err(PerpError::Error);
     }
 
-    if trade.actual_a_fee >= BigInt::from(AMOUNT_UPPER_BOUND) {
-        return Err(PerpError::Error);
-    }
 
-    if trade.actual_b_fee >= BigInt::from(AMOUNT_UPPER_BOUND) {
-        return Err(PerpError::Error);
-    }
+
+    // let amount_upper_bound = BigInt::from(AMOUNT_UPPER_BOUND);
+    // if trade.actual_collateral >= amount_upper_bound {
+    //     return Err(PerpError::Error);
+    // }
+    //
+    // if trade.actual_a_fee >= amount_upper_bound {
+    //     return Err(PerpError::Error);
+    // }
+    //
+    // if trade.actual_b_fee >= amount_upper_bound {
+    //     return Err(PerpError::Error);
+    // }
 
     let buyer: &LimitOrder = &trade.party_a_order;
     let seller: &LimitOrder = &trade.party_b_order;
