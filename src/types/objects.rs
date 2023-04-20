@@ -1,6 +1,6 @@
 use crate::types::defined_types::{AssetIdType, IndexType};
 use num_bigint::BigInt;
-use crate::types::defined_types::timeType;
+use crate::types::defined_types::TimeType;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct FundingIndex {
@@ -13,7 +13,7 @@ pub struct FundingIndex {
 #[derive(Debug, Clone, PartialEq)]
 pub struct FundingIndicesInfo {
     pub funding_indices: Vec<FundingIndex>,
-    pub funding_timestamp: timeType, // TODO: rename this field
+    pub funding_timestamp: TimeType, // TODO: rename this field
 }
 
 // Represents a single asset's Oracle Price in internal representation (Refer to the documentation of

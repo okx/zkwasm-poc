@@ -1,0 +1,37 @@
+zkwasm-poc v0.1.0 (/Users/xzavier/workspace/zkwasm-poc)
+├── hex v0.4.3
+├── num-bigint v0.4.3
+│   ├── num-integer v0.1.45
+│   │   └── num-traits v0.2.15
+│   │       [build-dependencies]
+│   │       └── autocfg v1.1.0
+│   │   [build-dependencies]
+│   │   └── autocfg v1.1.0
+│   └── num-traits v0.2.15 (*)
+│   [build-dependencies]
+│   └── autocfg v1.1.0
+├── num-traits v0.2.15 (*)
+├── once_cell v1.17.1
+└── wasm-bindgen v0.2.84
+    ├── cfg-if v1.0.0
+    └── wasm-bindgen-macro v0.2.84 (proc-macro)
+        ├── quote v1.0.26
+        │   └── proc-macro2 v1.0.56
+        │       └── unicode-ident v1.0.8
+        └── wasm-bindgen-macro-support v0.2.84
+            ├── proc-macro2 v1.0.56 (*)
+            ├── quote v1.0.26 (*)
+            ├── syn v1.0.109
+            │   ├── proc-macro2 v1.0.56 (*)
+            │   ├── quote v1.0.26 (*)
+            │   └── unicode-ident v1.0.8
+            ├── wasm-bindgen-backend v0.2.84
+            │   ├── bumpalo v3.12.0
+            │   ├── log v0.4.17
+            │   │   └── cfg-if v1.0.0
+            │   ├── once_cell v1.17.1
+            │   ├── proc-macro2 v1.0.56 (*)
+            │   ├── quote v1.0.26 (*)
+            │   ├── syn v1.0.109 (*)
+            │   └── wasm-bindgen-shared v0.2.84
+            └── wasm-bindgen-shared v0.2.84

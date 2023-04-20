@@ -9,7 +9,6 @@ use crate::types::order::OrderBase;
 use crate::types::limit_order::LimitOrder;
 use crate::executor::execute;
 use num_bigint::BigInt;
-use crate::types::defined_types::timeType;
 use crate::mock::make_state;
 use crate::types::config::BatchConfig;
 use crate::types::state::CarriedState;
@@ -85,6 +84,23 @@ fn generate_trade_tx() -> Trade {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // #[test]
+    // fn test_hash() {
+    //     let message_hash_buy = hex::decode("15311d0f75e0f3d33022a87bd83f29f20b983605c3369e242c1a833d74e45794").unwrap();
+    //     let message_hash = H256::from_slice(&message_hash_buy);
+    //     let order_id = extract_order_id(&message_hash).unwrap();
+    //     println!("{}", order_id);
+    //
+    //     let message_hash_bigint = h256_to_bigint(&message_hash);
+    //     let message_hash_bigint = bn254_hash_size_to_pedersen_hash_size(&message_hash_bigint);
+    //     println!("{}", message_hash_bigint);
+    //     let a = BigInt::from_str_radix("15311d0f75e0f3d33022a87bd83f29f20b983605c3369e242c1a833d74e45794", 16).unwrap();
+    //     println!("{}", a);
+    //
+    //     println!("{},{}", message_hash_bigint.to_string().len(), a.to_string().len());
+    //
+    // }
 
     #[test]
     fn test_trade() {

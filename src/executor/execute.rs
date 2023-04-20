@@ -13,6 +13,7 @@ use num_bigint::BigInt;
 use num_traits::Zero;
 use std::ops::Neg;
 use crate::types::trade::Trade;
+use num_traits::Num;
 
 pub fn execute_limit_order(
     carried_state: &mut CarriedState,
@@ -63,14 +64,14 @@ pub fn execute_limit_order(
     )?;
 
     // TODO: use real hash
-    let message_hash_buy = hex::decode("15311d0f75e0f3d33022a87bd83f29f20b983605c3369e242c1a833d74e45794").unwrap();
-    let message_hash_sell = hex::decode("26bce0eb499758b86ceba719a1c059fa7d7b693a7e651f4dfb4e177b3f0b6158").unwrap();
-    let message_hash: HashType;
-    if limit_order.is_buying_synthetic {
-        message_hash = HashType::from_slice(&message_hash_buy);
-    } else {
-        message_hash = HashType::from_slice(&message_hash_sell);
-    }
+    let message_hash = {
+        if limit_order.is_buying_synthetic {
+            HashType::from_str_radix("15311d0f75e0f3d33022a87bd83f29f20b983605c3369e242c1a833d74e45794", 16).unwrap()
+        } else {
+            HashType::from_str_radix("26bce0eb499758b86ceba719a1c059fa7d7b693a7e651f4dfb4e177b3f0b6158", 16).unwrap()
+        }
+    };
+
 
     //let message_hash: HashType = limit_order_hash(limit_order);
 
