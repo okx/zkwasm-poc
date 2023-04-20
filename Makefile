@@ -7,7 +7,7 @@ env-docker:
 	docker build -t rust-wasm - < Dockerfile
 
 build-in-docker:
-	docker run --rm -v $(PWD):/usr/src/myapp -w /usr/src/myapp rust-wasm sh -c "wasm-pack build --release && wasm-opt -Oz -o pkg/zkwasm_poc_bg_opt.wasm pkg/zkwasm_poc_bg.wasm"
+	docker run --rm -v $(PWD):/usr/src/myapp -w /usr/src/myapp rust-wasm sh -c "wasm-pack build --release"
 
 # run-in-docker:
 # 	docker run --rm -v $(PWD):/usr/src/myapp -w /usr/src/myapp rust-wasm sh -c "cargo install cargo-wasi && cargo wasi run"
