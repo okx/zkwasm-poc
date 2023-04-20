@@ -1,7 +1,8 @@
 use crate::types::constants::FXP_32_ONE;
+use crate::types::constants::SHIFT_32;
 use crate::types::constants::TOTAL_RISK_UPPER_BOUND;
-use crate::types::constants::TOTAL_VALUE_LOWER_BOUND;
-use crate::types::constants::TOTAL_VALUE_UPPER_BOUND;
+use crate::types::constants::{TOTAL_VALUE_LOWER_BOUND, TOTAL_VALUE_LOWER_BOUND_SHIFT_32, TOTAL_VALUE_LOWER_BOUND_SHIFT_63};
+use crate::types::constants::{TOTAL_VALUE_UPPER_BOUND, TOTAL_VALUE_UPPER_BOUND_SHIFT_32, TOTAL_VALUE_UPPER_BOUND_SHIFT_63};
 use crate::types::config::GeneralConfig;
 use crate::types::objects::OraclePrices;
 use crate::types::perp_error::PerpError;
@@ -17,7 +18,7 @@ fn position_get_status_inner(
     oracle_prices: &OraclePrices,
     general_config: &GeneralConfig,
 ) -> Result<(BigInt, BigInt), PerpError> {
-    let mut total_value_rep: BigInt = collateral_balance.clone();
+    let mut total_value_rep: BigInt = collateral_balance;
     let mut total_risk_rep: BigInt = BigInt::zero();
     let mut value_rep: BigInt = BigInt::zero();
     let mut risk_rep: BigInt = BigInt::zero();
@@ -50,7 +51,7 @@ pub fn position_get_status(
     general_config: &GeneralConfig,
 ) -> Result<(BigInt, BigInt), PerpError> {
     let (total_value_rep, total_risk_rep) = match position_get_status_inner(
-        position.collateral_balance.clone() * FXP_32_ONE.clone(),
+        &position.collateral_balance * FXP_32_ONE,
         &position.assets,
         oracle_prices,
         general_config,
@@ -59,20 +60,23 @@ pub fn position_get_status(
         Err(e) => return Err(e),
     };
 
-    let (total_value_rep2, total_risk_rep2) = (total_value_rep.to_i128().unwrap(), total_risk_rep.to_i128().unwrap());
+    //let (total_value_rep2, total_risk_rep2) = (total_value_rep.to_i128().unwrap(), total_risk_rep.to_i128().unwrap());
 
-    let total_value_lower_bound_rep = TOTAL_VALUE_LOWER_BOUND * FXP_32_ONE;
-    let total_value_upper_bound_rep = TOTAL_VALUE_UPPER_BOUND * FXP_32_ONE;
-    if total_value_rep2 < total_value_lower_bound_rep
-        || total_value_rep2 >= total_value_upper_bound_rep
+    let total_value_lower_bound_rep = BigInt::from(TOTAL_VALUE_LOWER_BOUND_SHIFT_32);
+    let total_value_upper_bound_rep = BigInt::from(TOTAL_VALUE_UPPER_BOUND_SHIFT_32);
+    if total_value_rep < total_value_lower_bound_rep
+        || total_value_rep >= total_value_upper_bound_rep
     {
-        // println!("OUT_OF_RANGE_TOTAL_VALUE total_value_rep: {}, total_value_lower_bound_rep: {}, total_value_upper_bound_rep: {}", total_value_rep, total_value_lower_bound_rep.clone(), total_value_upper_bound_rep.clone());
         return Err(PerpError::OutOfRangeTotalValue);
     }
 
-    #[allow(arithmetic_overflow)]
-    let tr_upper_bound_rep = TOTAL_RISK_UPPER_BOUND * FXP_32_ONE * FXP_32_ONE;
-    if total_risk_rep2 >= tr_upper_bound_rep {
+    //#[allow(arithmetic_overflow)]
+    //let a: i128 = 1<<64;
+    //std::u128::MAX;
+    //let a: u128 = -1;
+    let tr_upper_bound_rep = BigInt::from(TOTAL_RISK_UPPER_BOUND); //* a;
+    //println!("tr_upper_bound_rep: {}", tr_upper_bound_rep);
+    if total_risk_rep >= tr_upper_bound_rep {
         return Err(PerpError::OutOfRangeTotalRisk);
     }
 
