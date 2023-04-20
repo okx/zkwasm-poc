@@ -6,7 +6,7 @@ use crate::types::config::GeneralConfig;
 use crate::types::objects::OraclePrices;
 use crate::types::perp_error::PerpError;
 use num_bigint::BigInt;
-use num_traits::{One, Signed, Zero};
+use num_traits::{One, Signed, ToPrimitive, Zero};
 
 use super::position::Position;
 use super::position::PositionAsset;
@@ -59,17 +59,20 @@ pub fn position_get_status(
         Err(e) => return Err(e),
     };
 
-    let total_value_lower_bound_rep = TOTAL_VALUE_LOWER_BOUND.clone() * FXP_32_ONE.clone();
-    let total_value_upper_bound_rep = TOTAL_VALUE_UPPER_BOUND.clone() * FXP_32_ONE.clone();
-    if total_value_rep < total_value_lower_bound_rep.clone()
-        || total_value_rep >= total_value_upper_bound_rep.clone()
+    let (total_value_rep2, total_risk_rep2) = (total_value_rep.to_i128().unwrap(), total_risk_rep.to_i128().unwrap());
+
+    let total_value_lower_bound_rep = TOTAL_VALUE_LOWER_BOUND * FXP_32_ONE;
+    let total_value_upper_bound_rep = TOTAL_VALUE_UPPER_BOUND * FXP_32_ONE;
+    if total_value_rep2 < total_value_lower_bound_rep
+        || total_value_rep2 >= total_value_upper_bound_rep
     {
         // println!("OUT_OF_RANGE_TOTAL_VALUE total_value_rep: {}, total_value_lower_bound_rep: {}, total_value_upper_bound_rep: {}", total_value_rep, total_value_lower_bound_rep.clone(), total_value_upper_bound_rep.clone());
         return Err(PerpError::OutOfRangeTotalValue);
     }
 
-    let tr_upper_bound_rep = TOTAL_RISK_UPPER_BOUND * FXP_32_ONE.clone() * FXP_32_ONE.clone();
-    if total_risk_rep > tr_upper_bound_rep.clone() - BigInt::one() {
+    #[allow(arithmetic_overflow)]
+    let tr_upper_bound_rep = TOTAL_RISK_UPPER_BOUND * FXP_32_ONE * FXP_32_ONE;
+    if total_risk_rep2 >= tr_upper_bound_rep {
         return Err(PerpError::OutOfRangeTotalRisk);
     }
 
