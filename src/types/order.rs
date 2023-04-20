@@ -117,7 +117,7 @@ fn update_order_fulfillment(
     if update_amount < BigInt::zero() || update_amount > remaining_capacity {
         return Err(PerpError::OutOfRangeAmount);
     }
-    if full_amount >= AMOUNT_UPPER_BOUND.clone() {
+    if full_amount >= BigInt::from(AMOUNT_UPPER_BOUND) {
         return Err(PerpError::OutOfRangeAmount);
     }
     let _ = order_dict.update(&order_id, &(fulfilled_amount + update_amount));

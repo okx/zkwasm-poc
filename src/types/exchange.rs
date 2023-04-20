@@ -1,4 +1,2 @@
-use num_bigint::BigInt;
-use once_cell::sync::Lazy;
 
-pub static AMOUNT_UPPER_BOUND: Lazy<BigInt> = Lazy::new(|| BigInt::from(2).pow(64));
+pub static AMOUNT_UPPER_BOUND: i128 = 1<<64;

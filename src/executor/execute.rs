@@ -38,13 +38,13 @@ pub fn execute_limit_order(
     // 0 <= limit_order.amount_fee < AMOUNT_UPPER_BOUND.
     // Note that limit_order.amount_synthetic is checked by validate_order_and_update_fulfillment.
     if limit_order.amount_collateral < BigInt::from(POSITIVE_AMOUNT_LOWER_BOUND)
-        || limit_order.amount_collateral > AMOUNT_UPPER_BOUND.clone() - 1
+        || limit_order.amount_collateral >= BigInt::from(AMOUNT_UPPER_BOUND)
     {
         return Err(PerpError::OutOfRangePositiveAmount);
     }
 
     if limit_order.amount_fee < BigInt::zero()
-        || limit_order.amount_fee > AMOUNT_UPPER_BOUND.clone() - 1
+        || limit_order.amount_fee > BigInt::from(AMOUNT_UPPER_BOUND - 1)
     {
         return Err(PerpError::OutOfRangePositiveAmount);
     }
@@ -126,15 +126,15 @@ pub fn execute_trade(
     batch_config: &BatchConfig,
     trade: &Trade,
 ) -> Result<(), PerpError> {
-    if trade.actual_collateral >= AMOUNT_UPPER_BOUND.clone() {
+    if trade.actual_collateral >= BigInt::from(AMOUNT_UPPER_BOUND) {
         return Err(PerpError::Error);
     }
 
-    if trade.actual_a_fee >= AMOUNT_UPPER_BOUND.clone() {
+    if trade.actual_a_fee >= BigInt::from(AMOUNT_UPPER_BOUND) {
         return Err(PerpError::Error);
     }
 
-    if trade.actual_b_fee >= AMOUNT_UPPER_BOUND.clone() {
+    if trade.actual_b_fee >= BigInt::from(AMOUNT_UPPER_BOUND) {
         return Err(PerpError::Error);
     }
 

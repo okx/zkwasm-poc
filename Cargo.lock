@@ -167,6 +167,5 @@ dependencies = [
  "hex",
  "num-bigint",
  "num-traits",
- "once_cell",
  "wasm-bindgen",
 ]
