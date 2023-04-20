@@ -1,0 +1,16 @@
+{
+  "name": "zkwasm-poc",
+  "version": "0.1.0",
+  "files": [
+    "zkwasm_poc_bg.wasm",
+    "zkwasm_poc.js",
+    "zkwasm_poc_bg.js",
+    "zkwasm_poc.d.ts"
+  ],
+  "module": "zkwasm_poc.js",
+  "types": "zkwasm_poc.d.ts",
+  "sideEffects": [
+    "./zkwasm_poc.js",
+    "./snippets/*"
+  ]
+}
