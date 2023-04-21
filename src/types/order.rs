@@ -1,6 +1,6 @@
 use crate::types::packed_public_key::PublicKeyType;
 use num_bigint::BigInt;
-use num_traits::Zero;
+use num_traits::{Signed, Zero};
 use crate::types::perp_error::PerpError;
 use crate::types::exchange::AMOUNT_UPPER_BOUND;
 use crate::types::defined_types::{TimeType, HashType};
@@ -43,8 +43,8 @@ impl OrderDictAccess {
         }
     }
 
-    pub fn get_filled_amount(&mut self, order_id: &OrderIdType) -> Result<BigInt, PerpError> {
-        if let Some(v) = self.store.get(*order_id as usize % STORE_LEN) {
+    pub fn get_filled_amount(&mut self, order_id: OrderIdType) -> Result<BigInt, PerpError> {
+        if let Some(v) = self.store.get(order_id as usize % STORE_LEN) {
             Ok(v.clone())
         } else {
             Ok(BigInt::default())
@@ -53,11 +53,11 @@ impl OrderDictAccess {
 
     pub fn update(
         &mut self,
-        order_id: &OrderIdType,
-        new_value: &BigInt,
+        order_id: OrderIdType,
+        new_value: BigInt,
     ) -> Result<BigInt, PerpError> {
         let old_amount = self.get_filled_amount(order_id)?;
-        self.store[*order_id as usize % STORE_LEN] = new_value.clone();
+        self.store[order_id as usize % STORE_LEN] = new_value;
 
         Ok(old_amount)
     }
@@ -106,21 +106,21 @@ impl OrderDictAccess {
 fn update_order_fulfillment(
     order_dict: &mut OrderDictAccess,
     message_hash: &HashType,
-    update_amount: BigInt,
-    full_amount: BigInt,
+    update_amount: &BigInt,
+    full_amount: &BigInt,
 ) -> Result<(), PerpError> {
     let (_, data) = message_hash.to_u64_digits();
-    let order_id = data.get(0).unwrap();
+    let order_id = data[0];
 
-    let fulfilled_amount = order_dict.get_filled_amount(&order_id)?;
-    let remaining_capacity = full_amount.clone() - fulfilled_amount.clone();
-    if update_amount < BigInt::zero() || update_amount > remaining_capacity {
+    let fulfilled_amount = order_dict.get_filled_amount(order_id)?;
+    let remaining_capacity = full_amount - &fulfilled_amount;
+    if update_amount.is_negative() || update_amount > &remaining_capacity {
         return Err(PerpError::OutOfRangeAmount);
     }
-    if full_amount >= BigInt::from(AMOUNT_UPPER_BOUND) {
+    if full_amount >= &BigInt::from(AMOUNT_UPPER_BOUND) {
         return Err(PerpError::OutOfRangeAmount);
     }
-    let _ = order_dict.update(&order_id, &(fulfilled_amount + update_amount));
+    let _ = order_dict.update(order_id, fulfilled_amount + update_amount).unwrap();
     Ok(())
 }
 
@@ -129,8 +129,8 @@ pub fn validate_order_and_update_fulfillment(
     message_hash: &HashType,
     _order: &OrderBase,
     _min_expiration_timestamp: &TimeType,
-    update_amount: BigInt,
-    full_amount: BigInt,
+    update_amount: &BigInt,
+    full_amount: &BigInt,
 ) -> Result<(), PerpError> {
     // TODO verify signature
 

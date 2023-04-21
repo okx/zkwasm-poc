@@ -13,8 +13,6 @@ use crate::mock::make_state;
 use crate::types::config::BatchConfig;
 use crate::types::state::CarriedState;
 
-pub type KvStoreKey = u32;
-
 #[wasm_bindgen]
 pub fn zkmain() {
     let mut state = make_state();

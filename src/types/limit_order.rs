@@ -1,7 +1,7 @@
 use crate::types::defined_types::*;
 use crate::types::order::OrderBase;
 use num_bigint::BigInt;
-use num_traits::Zero;
+use num_traits::{Signed, Zero};
 use crate::types::perp_error::PerpError;
 
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -44,8 +44,8 @@ pub fn validate_limit_order_fairness(
 
     // actual_fee / actual_collateral <= amount_fee / amount_collateral, thus
     // actual_fee * amount_collateral <= amount_fee * actual_collateral.
-    if actual_fee.clone() * limit_order.amount_collateral.clone()
-        > limit_order.amount_fee.clone() * actual_collateral.clone()
+    if actual_fee * &limit_order.amount_collateral
+        > &limit_order.amount_fee * actual_collateral
     {
         // println!(
         //     "INVALID_FULFILLMENT_FEE_RATIO limit order {:?}, actual_collateral {}, actual_fee {}",
@@ -62,11 +62,11 @@ pub fn validate_limit_order_fairness(
         let amount_sell = amount_collateral;
         let amount_buy = &limit_order.amount_synthetic;
 
-        if actual_sold.clone() == BigInt::zero() {
+        if actual_sold.is_zero() {
             return Ok(());
         }
 
-        if (actual_sold.clone() - 1) * amount_buy >= amount_sell * actual_bought {
+        if (actual_sold - 1) * amount_buy >= amount_sell * actual_bought {
             // println!("INVALID_FULFILLMENT_ASSETS_RATIO ('actual_sold'-1):{}, amount_buy:{}, amount_sell:{}, actual_bought:{}", actual_sold - 1, amount_buy, amount_sell, actual_bought);
             return Err(PerpError::InvalidFulfillmentAssetsRatio);
         }
@@ -77,7 +77,7 @@ pub fn validate_limit_order_fairness(
     let actual_bought = actual_collateral;
     let amount_sell = &limit_order.amount_synthetic;
     let amount_buy = amount_collateral;
-    if actual_sold.clone() * amount_buy.clone() > amount_sell.clone() * (actual_bought.clone() + 1)
+    if actual_sold * amount_buy > amount_sell * (actual_bought + 1)
     {
         // println!("INVALID_FULFILLMENT_ASSETS_RATIO amount_sell:{}, (actual_bought+1):{}, actual_sold:{}, amount_buy:{}", amount_sell, (actual_bought + 1), actual_sold, amount_buy);
         return Err(PerpError::InvalidFulfillmentAssetsRatio);

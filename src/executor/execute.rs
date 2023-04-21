@@ -10,7 +10,7 @@ use crate::types::state::CarriedState;
 use crate::types::config::BatchConfig;
 use crate::executor::update_position::{update_position_in_dict, NO_SYNTHETIC_DELTA_ASSET_ID};
 use num_bigint::BigInt;
-use num_traits::Zero;
+use num_traits::{Signed, Zero};
 use std::ops::Neg;
 use crate::types::trade::Trade;
 use num_traits::Num;
@@ -19,11 +19,11 @@ pub fn execute_limit_order(
     carried_state: &mut CarriedState,
     batch_config: &BatchConfig,
     limit_order: &LimitOrder,
-    actual_collateral: BigInt,
-    actual_synthetic: BigInt,
-    actual_fee: BigInt,
+    actual_collateral: &BigInt,
+    actual_synthetic: &BigInt,
+    actual_fee: &BigInt,
 ) -> Result<(), PerpError> {
-    let general_config: &GeneralConfig = &batch_config.general_config;
+    let general_config = &batch_config.general_config;
 
     if limit_order.position_id == general_config.fee_position_info.position_id {
         return Err(PerpError::InvalidPositionID);
@@ -43,6 +43,10 @@ pub fn execute_limit_order(
         return Err(PerpError::OutOfRangePositiveAmount);
     }
 
+    //yxq
+    let a: u32 = 8;
+    let b = &limit_order.amount_fee * a;
+
     if limit_order.amount_fee < BigInt::zero()
         || limit_order.amount_fee > BigInt::from(AMOUNT_UPPER_BOUND - 1)
     {
@@ -52,15 +56,18 @@ pub fn execute_limit_order(
     // actual_synthetic > 0. To prevent replay.
     // Note that actual_synthetic < AMOUNT_UPPER_BOUND is checked in
     // validate_order_and_update_fulfillment.
-    if BigInt::from(POSITIVE_AMOUNT_LOWER_BOUND) > actual_synthetic {
+    // if BigInt::from(POSITIVE_AMOUNT_LOWER_BOUND) > actual_synthetic {
+    //     return Err(PerpError::OutOfRangePositiveAmount);
+    // }
+    if !actual_synthetic.is_positive() {
         return Err(PerpError::OutOfRangePositiveAmount);
     }
 
     validate_limit_order_fairness(
         limit_order,
-        &actual_collateral,
-        &actual_synthetic,
-        &actual_fee,
+        actual_collateral,
+        actual_synthetic,
+        actual_fee,
     )?;
 
     // TODO: use real hash
@@ -80,17 +87,17 @@ pub fn execute_limit_order(
         &message_hash,
         &limit_order.base,
         &batch_config.min_expiration_timestamp,
-        actual_synthetic.clone(),
-        limit_order.amount_synthetic.clone(),
+        &actual_synthetic,
+        &limit_order.amount_synthetic,
     )?;
     let collateral_delta: BigInt;
     let synthetic_delta: BigInt;
 
     if limit_order.is_buying_synthetic {
-        collateral_delta = actual_collateral.neg() - actual_fee.clone();
-        synthetic_delta = actual_synthetic;
+        collateral_delta = actual_collateral.neg() - actual_fee;
+        synthetic_delta = actual_synthetic.clone();
     } else {
-        collateral_delta = actual_collateral - actual_fee.clone();
+        collateral_delta = actual_collateral - actual_fee;
         synthetic_delta = actual_synthetic.neg();
     }
 
@@ -98,9 +105,9 @@ pub fn execute_limit_order(
         &mut carried_state.positions_dict,
         &general_config.fee_position_info.position_id,
         &general_config.fee_position_info.public_key,
-        actual_fee,
+        &actual_fee,
         &NO_SYNTHETIC_DELTA_ASSET_ID,
-        BigInt::zero(),
+        &BigInt::zero(),
         &carried_state.global_funding_indices,
         &carried_state.oracle_prices,
         general_config,
@@ -110,9 +117,9 @@ pub fn execute_limit_order(
         &mut carried_state.positions_dict,
         &limit_order.position_id,
         &limit_order.base.public_key,
-        collateral_delta,
+        &collateral_delta,
         &limit_order.asset_id_synthetic,
-        synthetic_delta,
+        &synthetic_delta,
         &carried_state.global_funding_indices,
         &carried_state.oracle_prices,
         general_config,
@@ -177,9 +184,9 @@ pub fn execute_trade(
         carried_state,
         batch_config,
         buyer,
-        trade.actual_collateral.clone(),
-        trade.actual_synthetic.clone(),
-        trade.actual_a_fee.clone(),
+        &trade.actual_collateral,
+        &trade.actual_synthetic,
+        &trade.actual_a_fee,
     )?;
 
     if buyer.asset_id_synthetic != seller.asset_id_synthetic {
@@ -190,8 +197,8 @@ pub fn execute_trade(
         carried_state,
         batch_config,
         seller,
-        trade.actual_collateral.clone(),
-        trade.actual_synthetic.clone(),
-        trade.actual_b_fee.clone(),
+        &trade.actual_collateral,
+        &trade.actual_synthetic,
+        &trade.actual_b_fee,
     )
 }

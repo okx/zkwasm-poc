@@ -61,9 +61,9 @@ fn is_asset_id_tradable(
 pub fn update_position(
     initial_position: &Position,
     request_public_key: &PublicKeyType,
-    collateral_delta: BigInt,
+    collateral_delta: &BigInt,
     synthetic_asset_id: &AssetIdType,
-    synthetic_delta: BigInt,
+    synthetic_delta: &BigInt,
     global_funding_indices: &FundingIndicesInfo,
     oracle_prices: &OraclePrices,
     general_config: &GeneralConfig,
@@ -87,14 +87,14 @@ pub fn update_position(
         if initial_position.public_key.eq(&PublicKeyType::default()) {
             // The current position is empty and we can't take its public key. We need to assert that
             // the new position is also empty because only in that case we don't need the public key.
-            if synthetic_delta != BigInt::zero() {
+            if synthetic_delta.is_zero() {
                 // println!(
                 //     "synthetic_delta: {}, initial position : {:?}",
                 //     synthetic_delta, initial_position
                 // );
                 return Err((funded_position, PerpError::InvalidPublicKey));
             }
-            if collateral_delta != BigInt::zero() {
+            if collateral_delta.is_zero() {
                 // println!(
                 //     "collateral_delta: {}, initial position : {:?}",
                 //     collateral_delta, initial_position
@@ -142,9 +142,9 @@ pub fn update_position_in_dict(
     position_dict: &mut PositionDictAccess,
     position_id: &PositionIdType,
     request_public_key: &PublicKeyType,
-    collateral_delta: BigInt,
+    collateral_delta: &BigInt,
     synthetic_asset_id: &AssetIdType,
-    synthetic_delta: BigInt,
+    synthetic_delta: &BigInt,
     global_funding_indices: &FundingIndicesInfo,
     oracle_prices: &OraclePrices,
     general_config: &GeneralConfig,

@@ -85,7 +85,7 @@ pub fn position_new(
 
 pub fn position_add_collateral(
     position: &Position,
-    delta: BigInt,
+    delta: &BigInt,
     public_key: &PublicKeyType,
 ) -> Result<Position, PerpError> {
     let final_position = create_maybe_empty_position(
